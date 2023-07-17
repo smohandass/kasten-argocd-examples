@@ -3,6 +3,8 @@ kind: K10
 metadata:
   name: k10
   namespace: kasten-io
+  annotations:
+    argocd.argoproj.io/sync-wave: "4" 
 spec:
   auth:
     openshift:
