@@ -3,7 +3,7 @@ kind: OperatorGroup
 metadata:
   annotations:
     olm.providedAPIs: K10.v1alpha1.apik10.kasten.io,K10restore.v1alpha1.apik10.kasten.io
-    argocd.argoproj.io/sync-wave: "2" 
+    argocd.argoproj.io/sync-wave: "1" 
   name: k10-kasten-operator-rhmp
   namespace: kasten-io
 spec:
