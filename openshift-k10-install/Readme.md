@@ -67,6 +67,12 @@ oc get secret router-ca -n openshift-ingress-operator -o jsonpath='{.data.tls\.c
 oc --namespace kasten-io create configmap custom-ca-bundle-store --from-file=custom-ca-bundle.pem
 ```
 
+Add role to user
+
+```
+oc adm policy add-role-to-user admin system:serviceaccount:openshift-gitops:openshift-gitops-argocd-application-controller -n kasten-io
+```
+
 Step 7 - create an application
 
 ```
