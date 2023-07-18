@@ -2,19 +2,30 @@
 # Follow instructions to install Kasten using argoCD on Openshift environment.
 
 Step 1 - Install argocd
+
 https://argo-cd.readthedocs.io/en/stable/getting_started/
 
 Step 2 - install argocd cli
+
 https://argo-cd.readthedocs.io/en/stable/cli_installation/
 
 step 3 - Login Using The CLI
 
 Get the argocd initial password 
-argocd admin initial-password -n argocd
 
+```
+ARGOCD_SERVER_PASSWORD=$(oc -n argocd get pod -l "app.kubernetes.io/name=argocd-server" -o jsonpath='{.items[*].metadata.name}')
+echo $ARGOCD_SERVER_PASSWORD
+```
+
+Authenticate argocd with cluster
+
+```
 argocd login openshift-gitops-server-openshift-gitops.apps.bm2.redhat.hpecic.net --username admin --password <password>
+```
 
 Step 5 - Login to the Openshift cluster using oc login command
+
 
 Step 6 - 
 
