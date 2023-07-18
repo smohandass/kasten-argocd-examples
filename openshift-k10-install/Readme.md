@@ -25,7 +25,7 @@ kubectl create namespace kasten-io
 create the Service Account
 
 
-````
+```
 cat<<EOF | kubectl create -f -
 apiVersion: v1
 kind: ServiceAccount
@@ -59,10 +59,13 @@ my_token=$(oc -n kasten-io get secret k10-dex-sa-secret -o jsonpath='{.data.toke
 echo $my_token
 ```
 
+Create configmap
 
+```
 oc get secret router-ca -n openshift-ingress-operator -o jsonpath='{.data.tls\.crt}'' | base64 -d > custom-ca-bundle.pem
 
 oc --namespace kasten-io create configmap custom-ca-bundle-store --from-file=custom-ca-bundle.pem
+```
 
 Step 7 - create an application
 
