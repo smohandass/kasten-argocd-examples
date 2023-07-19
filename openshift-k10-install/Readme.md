@@ -14,8 +14,8 @@ step 3 - Login Using The CLI
 Get the argocd initial password 
 
 ```
-ARGOCD_SERVER_PASSWORD=$(oc -n argocd get pod -l "app.kubernetes.io/name=argocd-server" -o jsonpath='{.items[*].metadata.name}')
-echo $ARGOCD_SERVER_PASSWORD
+argoPass=$(oc get secret/openshift-gitops-cluster -n openshift-gitops -o jsonpath='{.data.admin\.password}' | base64 -d)
+echo $argoPass
 ```
 
 Authenticate argocd with cluster
