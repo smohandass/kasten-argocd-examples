@@ -1,0 +1,38 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kasten-io
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  annotations:
+    olm.providedAPIs: K10.v1alpha1.apik10.kasten.io,K10restore.v1alpha1.apik10.kasten.io
+    argocd.argoproj.io/sync-wave: "2"
+  name: kasten-io-og
+  namespace: kasten-io
+spec:
+  targetNamespaces:
+  - kasten-io
+  upgradeStrategy: Default
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: k10-kasten-operator-rhmp
+  namespace: kasten-io
+  labels:
+    operators.coreos.com/k10-kasten-operator-rhmp.kasten-io: ""
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  channel: stable
+  installPlanApproval: Automatic
+  name: k10-kasten-operator-rhmp
+  source: redhat-marketplace
+  sourceNamespace: openshift-marketplace
+  startingCSV: k10-kasten-operator-rhmp.v6.0.2
+---
