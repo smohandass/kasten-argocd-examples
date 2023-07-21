@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: k10-instance
+  namespace: kasten-io
+spec:
+  template:
+    spec:
+      containers:
+        - image: registry.redhat.io/openshift4/ose-cli:v4.12
+          command:
+            - /bin/bash
+            - -c
+            - |
+              cat<<EOF | kubectl create -f -
+              apiVersion: v1
+              kind: ServiceAccount
+              metadata:
+                name: k10-dex-sa
+                namespace: kasten-io
+              annotations:
+                serviceaccounts.openshift.io/oauth-redirecturi.dex: https://k10-route-kasten-io.apps.bm2.redhat.hpecic.net/k10/dex/callback
+              EOF
+          name: k10-instance
+          env:
+            - name: SLEEP
+              value: "5"
+      serviceAccountName: k10-kasten-operator-rhmp-controller-manager
+      restartPolicy: Never

@@ -1,0 +1,126 @@
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  annotations:
+    olm.providedAPIs: K10.v1alpha1.apik10.kasten.io,K10restore.v1alpha1.apik10.kasten.io
+    argocd.argoproj.io/sync-wave: "1"
+  name: kasten-io-og
+  namespace: kasten-io
+spec:
+  targetNamespaces:
+  - kasten-io
+  upgradeStrategy: Default
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: k10-kasten-operator-rhmp
+  namespace: kasten-io
+  labels:
+    operators.coreos.com/k10-kasten-operator-rhmp.kasten-io: ""
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  channel: stable
+  installPlanApproval: Automatic
+  name: k10-kasten-operator-rhmp
+  source: redhat-marketplace
+  sourceNamespace: openshift-marketplace
+  startingCSV: k10-kasten-operator-rhmp.v6.0.2
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: k10-dex-sa
+  namespace: kasten-io
+  annotations:
+    serviceaccounts.openshift.io/oauth-redirecturi.dex: https://k10-route-kasten-io.apps.bm2.redhat.hpecic.net/k10/dex/callback
+    argocd.argoproj.io/sync-wave: "3"
+---
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/service-account-token
+metadata:
+  name: k10-dex-sa-secret
+  namespace: kasten-io
+  annotations:
+    kubernetes.io/service-account.name: "k10-dex-sa"
+    argocd.argoproj.io/sync-wave: "4"
+---
+apiVersion: v1
+kind: ConfigMap
+data:
+  custom-ca-bundle.pem: |
+    -----BEGIN CERTIFICATE-----
+    MIIDDDCCAfSgAwIBAgIBATANBgkqhkiG9w0BAQsFADAmMSQwIgYDVQQDDBtpbmdy
+    ZXNzLW9wZXJhdG9yQDE2NzYyNzc5NjgwHhcNMjMwMjEzMDg0NjA3WhcNMjUwMjEy
+    MDg0NjA4WjAmMSQwIgYDVQQDDBtpbmdyZXNzLW9wZXJhdG9yQDE2NzYyNzc5Njgw
+    ggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDSAawS38r0t6ufwiLOayWv
+    lC20GutCNWbmPgeYanYd7w9+zoq/rdAGHZizYSsuXTt6McwjkVvrVToWfwKCElFs
+    QC8x5liINC2cXKSk+7I4ZyaEqxJ8szmpiRSfkcgiXA1LMvCyVfME7jFMgDMxod7q
+    16AaQyXEVW8kNDvw5rzBpvTf6+tJ5IQmmEd8PEupRV0XY7bix1X/TrN2zaF5x4Eh
+    YYFOrCtmEzJzZpm9doyXbNaGVtd5Co93yXmWPCvUlveIKsx88zXO1J+HndQ9RMR0
+    91O0eBItLdmexHF08TQDG6iJTEEQ2CxsSSkE7AkaTb5u5kLHMs3yNG3un25busIb
+    AgMBAAGjRTBDMA4GA1UdDwEB/wQEAwICpDASBgNVHRMBAf8ECDAGAQH/AgEAMB0G
+    A1UdDgQWBBRcqnX4CHjnQhW+dsNVOy/WyQBNhTANBgkqhkiG9w0BAQsFAAOCAQEA
+    l63UAly4EmIoB6NaYoa3jgTKdMnC+6mvhRGgZR5vUifmTzbD0WPJWlPu39nfFtGn
+    cyhiW6wlbyadhKABAvsgp0zj7gOVr5AX4SoN3PxRKeWIOKXvXbBgDJxvGbdXl7uy
+    uE5M+AGeF5Ltq9e4mSmd3MbUWhut+WN74XYoB0Xlg1y12oisFKPP925NJiTMaoZF
+    7kVICP+6C2Dwd7q3xFQCJW78Rti2WsHvun2EpXYbv2sPIY04YohECkNkfLRshg8f
+    QrxYdHZBcReeAo/tCIicQlxbOyr416ihmgyAOhiC5wLpVRVWF0nFGOBNiXvKGz3l
+    Oz+5MXvh9DXodNvXr6wn5w==
+    -----END CERTIFICATE-----
+    -----BEGIN CERTIFICATE-----
+    MIIDejCCAmKgAwIBAgIIWB7uU4fNZTgwDQYJKoZIhvcNAQELBQAwNzESMBAGA1UE
+    CxMJb3BlbnNoaWZ0MSEwHwYDVQQDExhrdWJlLWFwaXNlcnZlci1sYi1zaWduZXIw
+    HhcNMjMwNzEzMDg0NjIzWhcNMjMwODEyMDg0NjI0WjAkMSIwIAYDVQQDExlhcGku
+    Ym0yLnJlZGhhdC5ocGVjaWMubmV0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB
+    CgKCAQEA5EWPw4JU8swZgfRFokb6gqSwBD3ZSMAypZhTABFqDumxy2lFsQT24Hdw
+    woGNWyvD6nkXmU0MdBfxmVzlMY9PsO91zJo+JxCDTDXOUYOE3nx21sZWZDtlW3Y0
+    QYWewkz+IpEscasSeJHY/yP0mF9lEsI3eZ7j4wVOAOv5cPJybF6wrsSGCrCP2ocy
+    4zzZ9R9TjRPUD7SHjr73vs2HzSKrn2Tt0tWHh8a36oVlr2uwK4n+ViOuS4tNmkDh
+    pJW0KaeN25IJCVIn4KqVi3DZakc5He34W3pMemoIgG75M37XoXkI8oHVnN7vV0EL
+    M3ORbD/RY46ai+L6vokR/QBICpvoDQIDAQABo4GcMIGZMA4GA1UdDwEB/wQEAwIF
+    oDATBgNVHSUEDDAKBggrBgEFBQcDATAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBRU
+    wgD6iY71NSL5oD2gjF+wFID8tDAfBgNVHSMEGDAWgBRPmuJqZ7e9x7g3sFG7tuUh
+    V3FssTAkBgNVHREEHTAbghlhcGkuYm0yLnJlZGhhdC5ocGVjaWMubmV0MA0GCSqG
+    SIb3DQEBCwUAA4IBAQAlMk+Gb/UYuLpnHHIkop/hJai23jQrIO1IZOpFX8Z9H61N
+    qecYZ14ldEg230REiWTaZo8K6ITao/AxqRnmWwMgODEuFENzTydXcrfx70F2eD3m
+    M0ZB3N2w0v384EbqUOLotsa8qG7+xzJZeJhsD2pzZWkyGpMFSey2yduxysJso8MN
+    Coc7SpsRtqN8U/pgyOOch/XJAgugt2mNCJMD+6nbr8V2eEFzIWHn4IGvPmToLJe6
+    wmeTJ9lQshoEREmOKH7rO8azRWB8Aft8Zhn46hbM5DrEbY/F78ibCMeaVDOkkwCa
+    dM5AvRfZ9mshGXaSFA1g9VwletfNhGXU4Xbw4PEl
+    -----END CERTIFICATE-----
+metadata:
+  name: custom-ca-bundle-store
+  namespace: kasten-io
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+---
+apiVersion: apik10.kasten.io/v1alpha1
+kind: K10
+metadata:
+  name: k10
+  namespace: kasten-io
+  annotations:
+    argocd.argoproj.io/sync-wave: "6" 
+spec:
+  auth:
+    openshift:
+      enabled: true
+      serviceAccount: "k10-dex-sa"
+      clientSecret: "eyJhbGciOiJSUzI1NiIsImtpZCI6IlpIZDJNOG5pdVAwRkk3aEQyb2g3UXRFWVk4clBFYUVBd1RSZVo0MkxTQU0ifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrYXN0ZW4taW8iLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoiazEwLWRleC1zYS1zZWNyZXQiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiazEwLWRleC1zYSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImZmYjYxNmJhLTBhY2EtNGNhOS04NWQ3LWU4ZWViYzFkY2JkZSIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDprYXN0ZW4taW86azEwLWRleC1zYSJ9.fkcHnAk-A96m-gGGxMdMelXMHeX7Tam0MuZxqwUKRdXFCFNjkJAk6avJg7kP4tfwsjBWEUdyCfX45wPpzsFEluOKDK9WzzjqppBS9UxSws3_zoa9-lbfJjAoXvA7x-H7io00Yv4mlo375FRd4E0I0PIAzQZuOX4kL7GIj6HC46CFJcHWjikkpigsN_zcdr9wBq3-TYgV3qiZCaRxZWMx4xDV4b1Ygo0HnaHdfcK9P8p-_U7fxbphP1Si2SM7ZwObLSWbaxnK8IwL0uZO6gn8BZp6KNHrTsgD9vHZ3n5QpDIl9IHcMy4wSJw5iMsfzWc6vLr6VgBTLO9A3u38lwoh__cmbZR-pgQWU5e4WMuov_qkMYdwCKN79ujvRQXMmSYZ0aTD34FFwCHE2luviWbtRS3mf0iw5Fx_9hOOV7heToyIsDNkUjdJtmehEnuIcGG0E0L6xZtugGn7KTsCHi9fpGENIg054rzWg8dRUTP796LgsTVa9l0w7qa61dUvbuobRU7RplCQfOi1R-GpK_YvDd62KQBFL4k5gBzvEJOIe_e55y-oGlbV1EyHBKQN-HuWRlnhtO5maijBUTn7IHq7mhC2M74V2OZ8OkHH43ZoIk6iyyDWi_6jJkLRO8fpp9ZDZwYkupEdwd-9GQlqGslefuuyyzpJ2TMnehqTAaEl48A"
+      dashboardURL: "https://k10-route-kasten-io.apps.bm2.redhat.hpecic.net/k10"
+      openshiftURL: "https://api.bm2.redhat.hpecic.net:6443"
+      insecureCA: false
+  cacertconfigmap:
+    name: "custom-ca-bundle-store"
+  global:
+    persistence:
+      storageClass: "ocs-storagecluster-ceph-rbd"
+  route:
+    enabled: true
+    tls:
+      enabled: true
+---
