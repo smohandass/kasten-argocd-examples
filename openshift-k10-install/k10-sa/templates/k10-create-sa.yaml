@@ -16,6 +16,8 @@ spec:
               apiVersion: v1
               kind: ServiceAccount
               metadata:
+                finalizers:
+                - resources-finalizer.argocd.argoproj.io
                 name: k10-dex-sa
                 namespace: kasten-io
                 annotations:
