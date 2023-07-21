@@ -18,8 +18,8 @@ spec:
               metadata:
                 name: k10-dex-sa
                 namespace: kasten-io
-              annotations:
-                serviceaccounts.openshift.io/oauth-redirecturi.dex: https://k10-route-kasten-io.apps.bm2.redhat.hpecic.net/k10/dex/callback
+                annotations:
+                  serviceaccounts.openshift.io/oauth-redirecturi.dex: https://k10-route-kasten-io.apps.bm2.redhat.hpecic.net/k10/dex/callback
               EOF
           name: k10-instance
           env:
