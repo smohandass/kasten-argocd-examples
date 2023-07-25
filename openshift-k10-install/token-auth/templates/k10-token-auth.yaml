@@ -5,7 +5,9 @@ metadata:
   annotations:
     olm.providedAPIs: K10.v1alpha1.apik10.kasten.io,K10restore.v1alpha1.apik10.kasten.io
     argocd.argoproj.io/sync-wave: "1"
-  name: kasten-io-og
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  name: k10-kasten-operator-rhmp 
   namespace: kasten-io
 spec:
   targetNamespaces:
@@ -15,6 +17,8 @@ spec:
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
   name: k10-kasten-operator-rhmp
   namespace: kasten-io
   labels:
@@ -32,6 +36,8 @@ spec:
 apiVersion: apik10.kasten.io/v1alpha1
 kind: K10
 metadata:
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
   name: k10
   namespace: kasten-io
   annotations:
